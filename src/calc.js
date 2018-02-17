@@ -65,8 +65,12 @@ function loadFile() {
 
 function setData(data) {
 	
-	if (!!data && !!data.value1 && !!data.value2 && 
-		!!data.operator && !!data.result) {
+	if (!!data 
+		&& null != data.value1 && undefined != data.value1 
+		&& null != data.value2 && undefined != data.value2 
+		&& null != data.result && undefined != data.result 
+		&& null != data.operator && undefined != data.operator 
+	) {
 		resetButton();
 		document.getElementById('txtValue1').value = data.value1;
 		document.getElementById('txtValue2').value = data.value2;
