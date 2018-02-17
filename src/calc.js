@@ -51,7 +51,7 @@ function loadFile() {
 			]
 		  } );
 	
-	if (!!filename|| filename.length == 0) 
+	if (!filename|| filename.length == 0) 
 		return;
 	
 	fs.readFile(filename[0], 'utf8', function (err, jsonData) {
@@ -64,30 +64,40 @@ function loadFile() {
 }
 
 function setData(data) {
-	resetButton();
-	document.getElementById('txtValue1').value = data.value1;
-	document.getElementById('txtValue2').value = data.value2;
-	document.getElementById('result').value = data.result;
-		
-	manageButton(data.operator);
+	
+	if (!!data && !!data.value1 && !!data.value2 && 
+		!!data.operator && !!data.result) {
+		resetButton();
+		document.getElementById('txtValue1').value = data.value1;
+		document.getElementById('txtValue2').value = data.value2;
+		document.getElementById('result').value = data.result;
+			
+		manageButton(data.operator);
+	}
 }
 
 function save() {
-	if (document.getElementById('cloud').checked ) 
-		saveCloud();
-	else 
-		saveFile();
+	if (!data || !data.value1 ) {
+		alert('Please input value A and B and click operator button (+, -,*,/, Pow)')
+	}
+	else {
+		if (document.getElementById('cloud').checked ) 
+			saveCloud();
+		else 
+			saveFile();
+	}
 }
 
 function saveFile() {
-	var filename = dialog.showSaveDialog({properties: ['openFile'],
+	var filename ="";
+	filename = dialog.showSaveDialog({properties: ['openFile'],
 			filters: [
 			  {name: 'JSON File Type', extensions: ['json']},
 			  {name: 'All Files', extensions: ['*']}
 			]
 		  } );
 	//console.log(filename);
-	if (!!filename|| filename.length == 0)  return;
+	if (!filename|| filename.length == 0)  return;
 	//let  dictstring = JSON.stringify(data); alert(dictstring);
 
 	fs.writeFile(filename, JSON.stringify(data), (err) => {
@@ -100,9 +110,9 @@ function saveFile() {
 
 }
 
-function loadCloud() {
-
-console.log("loadCloud");
+function loadCloud() { 
+	
+	console.log("loadCloud");
 	var xhr = new XMLHttpRequest();
 	var urlLoad = url + "load";
 	xhr.open("GET", urlLoad, true);
@@ -122,6 +132,7 @@ console.log("loadCloud");
 }
 
 function saveCloud() {
+	
 	var xhr = new XMLHttpRequest();
 	var urlSave = url + "save"; 
 	xhr.open("POST", urlSave, true);
@@ -133,6 +144,7 @@ function saveCloud() {
 		}
 	};
 	xhr.send(JSON.stringify(data));
+	
 }
 
 function manageButton(operator) {
