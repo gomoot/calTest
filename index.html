@@ -2,41 +2,33 @@
   <html>
     <head>
       <meta charset="UTF-8">
-      <title>Hello World!</title>
+      <title>Calculator App!!</title>
     </head>
     <body>
-     
-    <script type="text/javascript">
-     	
-	
-	
-    </script>
-	<script src="calc.js"></script>
-	
-	
+	<script src="src/calc.js"></script>
 	<form>
-	A: <input type="number" id="txtValue1"/>
-	<br/>
-	<br/>
-	B: <input type="number" id="txtValue2"/>
-	<br/>
-	<br/>
-	<input type="button" id="bPlus" value="+" onclick="calculate('+')"/>
-	<input type="button" id="bSub"  value="-" onclick="calculate('-')"/>
-	<input type="button" id="bMul" value="*" onclick="calculate('*')"/>
-	<input type="button" id="bDiv" value="/" onclick="calculate('/')"/>
-	<input type="button" id="bPow" value="pow" onclick="calculate('^')"/>
-	<br/>
-	<br/>
-	Result: <input type="text" id="result"/>
-	
-	<br/>
-	<input type="checkbox" id='cloud' >Cloud Drive</input>
-	<br/>
-	<br/>
-	<input type="button" value="Load" onclick="load()"/>
-	<input type="button" value="Save" onclick="save()"/>
-	<br/>
+		A: <input type="number" id="txtValue1"/>
+		<br/>
+		<br/>
+		B: <input type="number" id="txtValue2"/>
+		<br/>
+		<br/>
+		<input type="button" id="bPlus" value="+" onclick="calculate('+')"/>
+		<input type="button" id="bSub"  value="-" onclick="calculate('-')"/>
+		<input type="button" id="bMul" value="*" onclick="calculate('*')"/>
+		<input type="button" id="bDiv" value="/" onclick="calculate('/')"/>
+		<input type="button" id="bPow" value="pow" onclick="calculate('^')"/>
+		<br/>
+		<br/>
+		Result: <input type="text" id="result"/>
+		
+		<br/>
+		<input type="checkbox" id='cloud' >Cloud Drive</input>
+		<br/>
+		<br/>
+		<input type="button" value="Load" onclick="load()"/>
+		<input type="button" value="Save" onclick="save()"/>
+		<br/>
 	</form>
     </body>
   </html>

@@ -7,5 +7,6 @@
     },
     "scripts": {
         "start": "electron main.js"
+		
     }
 }

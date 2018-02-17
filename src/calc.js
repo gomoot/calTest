@@ -1,14 +1,10 @@
 var data = {}
+var url="http://calctest.us-east-2.elasticbeanstalk.com/";
 var fs = require('fs');
 var operator = '';
 const {dialog} = require('electron').remote;
-var button = ["bSub", "bMul", "bPlus" , "bPow" , "bDiv"];
+var button = [ "bPlus" ,"bSub", "bMul", "bDiv", "bPow" ];
 	
-function resetButton() {
-	for (let i=0; i<button.length ; i++)
-		document.getElementById(button[i]).style.backgroundColor="#e7e7e7";
-}
-
 function calculate(type){
 	let result = 0;
 	let value1 = parseInt(document.forms[0][0].value);
@@ -20,41 +16,31 @@ function calculate(type){
 		result = "Please input number !!" ; 
 	else {
 		let hightlight = '' 
-		switch(type)
-		{
-			case '+' : result = value1 + value2; hightlight = "bPlus";  break;
-			case '-' : result = value1 - value2; hightlight = "bSub"; break;
-			case '*' : result = value1 * value2; hightlight = "bMul";break;
-			case '/' : result = value1 / value2; hightlight = "bDiv"; break;
-			case '^' : result = Math.pow(value1, value2); hightlight = "bPow"; break;
-			
+		switch(type) {
+			case '+' : result = sum(value1,value2); break;
+			case '-' : result = sub(value1,value2); break;
+			case '*' : result = mul(value1,value2); break;
+			case '/' : result = div(value1,value2); break;
+			case '^' : result = pow(value1,value2); break;	
 		}
 		data.value1 = value1;
 		data.value2 = value2;
 		data.operator = type;
 		data.result = result;
-	
-		if (hightlight !== "")
-			document.getElementById(hightlight).style.backgroundColor ="#4CAF50";
-	
+		
+		manageButton(data.operator);
 	}
 	
 	document.getElementById('result').value = result;
-	
-	//window.alert(result);  
-		
-};
+}
 
 function load()
 {
-	//alert(document.getElementById('cloud').checked );
 	if (document.getElementById('cloud').checked ) 
 		loadCloud();
 	else 
 		loadFile();
 }
-
-
 
 function loadFile() {
 	var filename = "";
@@ -65,7 +51,7 @@ function loadFile() {
 			]
 		  } );
 	
-	if (filename === undefined) 
+	if (!!filename|| filename.length == 0) 
 		return;
 	
 	fs.readFile(filename[0], 'utf8', function (err, jsonData) {
@@ -83,19 +69,7 @@ function setData(data) {
 	document.getElementById('txtValue2').value = data.value2;
 	document.getElementById('result').value = data.result;
 		
-	let hightlight="";
-	switch ( data.operator ) 
-	{
-		case '+' : hightlight = "bPlus" ; break;
-		case '-' : hightlight = "bSub" ; break;
-		case '*' : hightlight = "bMul" ; break;
-		case '/' : hightlight = "bDiv" ; break;
-		case '^' : hightlight = "bPow" ;  break;
-			
-	} 
-		
-	if (hightlight !== "")
-		document.getElementById(hightlight).style.backgroundColor ="#4CAF50";
+	manageButton(data.operator);
 }
 
 function save() {
@@ -113,11 +87,10 @@ function saveFile() {
 			]
 		  } );
 	//console.log(filename);
-	if (filename === undefined) return;
-	let  dictstring = JSON.stringify(data); alert(dictstring);
-	//var fs = require('fs');
-	//fs.writeFile("thing.json", dictstring);
-	fs.writeFile(filename, dictstring, (err) => {
+	if (!!filename|| filename.length == 0)  return;
+	//let  dictstring = JSON.stringify(data); alert(dictstring);
+
+	fs.writeFile(filename, JSON.stringify(data), (err) => {
 		if (err) {
 			console.error(err);
 			return;
@@ -129,27 +102,29 @@ function saveFile() {
 
 function loadCloud() {
 
+console.log("loadCloud");
 	var xhr = new XMLHttpRequest();
-	var url = "http://127.0.0.1:3000/load";
-	xhr.open("GET", url, true);
+	var urlLoad = url + "load";
+	xhr.open("GET", urlLoad, true);
 	//xhr.setRequestHeader("Content-type", "application/json");
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState === 4 && xhr.status === 200) {
-			var json = JSON.parse(xhr.responseText);
+			//console.log("xhr.readyState " + xhr.readyState + ":" + xhr.responseText);
+			if (!!xhr.responseText) {
+				var json = JSON.parse(xhr.responseText);
 			//alert(xhr.responseText)
-			setData(json);
+				setData(json);
+			}
 		}
 	};
 	
 	xhr.send();
-
-
 }
 
 function saveCloud() {
 	var xhr = new XMLHttpRequest();
-	var url = "http://127.0.0.1:3000/save";
-	xhr.open("POST", url, true);
+	var urlSave = url + "save"; 
+	xhr.open("POST", urlSave, true);
 	xhr.setRequestHeader("Content-type", "application/json");
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState === 4 && xhr.status === 200) {
@@ -157,7 +132,45 @@ function saveCloud() {
 			alert(xhr.responseText)
 		}
 	};
-	//var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"});
 	xhr.send(JSON.stringify(data));
 }
 
+function manageButton(operator) {
+	let hightlight="";
+	switch ( operator ){
+		case '+' : hightlight = "bPlus" ; break;
+		case '-' : hightlight = "bSub" ; break;
+		case '*' : hightlight = "bMul" ; break;
+		case '/' : hightlight = "bDiv" ; break;
+		case '^' : hightlight = "bPow" ;  break;	
+	} 
+		
+	if (hightlight !== "")
+		document.getElementById(hightlight).style.backgroundColor ="#4CAF50";
+}
+
+function resetButton() {
+	for (let i=0; i<button.length ; i++)
+		document.getElementById(button[i]).style.backgroundColor="#e7e7e7";
+}
+
+function div(x,y) {
+	if (y==0) return 0;
+	return x/y;
+}
+
+function mul(x,y) {
+	return x*y;
+}
+
+function sum(x,y) {
+	return x+y;
+}
+
+function sub(x,y) {
+	return x-y;
+}
+
+function pow(x,y) {
+	return  Math.pow(x,y);;
+}
